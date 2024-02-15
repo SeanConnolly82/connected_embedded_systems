@@ -1,4 +1,7 @@
+#include <string>
 #include "I2CDevice.h"
+
+using namespace std;
 
 #define DS3231_SEC_ADDR 0x00
 #define DS3231_MIN_ADDR 0x01
@@ -31,4 +34,12 @@ public:
     virtual unsigned char readYear();
     virtual void readDateTime();
     virtual void displayDateTime();
+    virtual int setSeconds(unsigned char second);
+    virtual int setMinutes(unsigned char mintues);
+    virtual int setHours(unsigned char hours);
+    virtual int setDay(unsigned char day);
+    virtual int setDate(unsigned char date);
+    virtual int setMonth(unsigned char month);
+    virtual int setYear(unsigned char year);
+    virtual void setDateTime(const string&  datetimeString);
 };

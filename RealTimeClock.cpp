@@ -1,7 +1,9 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+
 #include "I2CDevice.h"
 #include "RealTimeClock.h"
-#include<iostream>
-#include<iomanip>
 
 using namespace std;
 
@@ -13,7 +15,6 @@ RealTimeClock::RealTimeClock(unsigned int bus, unsigned int device):I2CDevice(bu
 unsigned char RealTimeClock::bcdToDecimal(unsigned char bcdValue) {
     return ((bcdValue & 0xF0) >> 4) * 10 + (bcdValue & 0x0F);
 }
-
 unsigned char RealTimeClock::decimalToBcd(unsigned char decimalValue) {
     return ((decimalValue / 10) << 4) | (decimalValue % 10);
 }
@@ -36,7 +37,28 @@ unsigned char RealTimeClock::readMonth(){
     return I2CDevice::readRegister(DS3231_MON_ADDR);
 }
 unsigned char RealTimeClock::readYear(){
-    return I2CDevice::readRegister(DS3231_MON_ADDR);
+    return I2CDevice::readRegister(DS3231_YRS_ADDR);
+}
+int RealTimeClock::setSeconds(unsigned char seconds){
+    return I2CDevice::writeRegister(DS3231_SEC_ADDR, seconds);
+}
+int RealTimeClock::setMinutes(unsigned char minutes){
+    return I2CDevice::writeRegister(DS3231_MIN_ADDR, minutes);
+}
+int RealTimeClock::setHours(unsigned char hours){
+    return I2CDevice::writeRegister(DS3231_HRS_ADDR, hours);
+}
+int RealTimeClock::setDay(unsigned char day){
+    return I2CDevice::writeRegister(DS3231_DAY_ADDR, day);
+}
+int RealTimeClock::setDate(unsigned char date){
+    return I2CDevice::writeRegister(DS3231_DTE_ADDR, date);
+}
+int RealTimeClock::setMonth(unsigned char month){
+    return I2CDevice::writeRegister(DS3231_MON_ADDR, month);
+}
+int RealTimeClock::setYear(unsigned char year){
+    return I2CDevice::writeRegister(DS3231_YRS_ADDR, year);
 }
 void RealTimeClock::readDateTime() {
     this->seconds = readSeconds();
@@ -59,4 +81,15 @@ void RealTimeClock::displayDateTime() {
     cout << FRMT_WIDTH(bcdToDecimal(this->date)) << "-";
     cout << FRMT_WIDTH(bcdToDecimal(this->month)) << "-";
     cout << FRMT_WIDTH(bcdToDecimal(this->year)) + 2000 << endl;
+}
+
+void RealTimeClock::setDateTime(const string& datetimeString) {
+    cout << datetimeString << endl;
+    setSeconds(decimalToBcd(0));
+    setMinutes(decimalToBcd(35));
+    setHours(decimalToBcd(16));
+    setDay(decimalToBcd(4));
+    setDate(decimalToBcd(15));
+    setMonth(decimalToBcd(2));
+    setYear(decimalToBcd(24));
 }

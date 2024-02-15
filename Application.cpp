@@ -1,11 +1,12 @@
 #include "RealTimeClock.h"
 
-#include<iostream>
-#include<iomanip>
+#include <iostream>
+#include <cstring>
+#include <iomanip>
 
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
     RealTimeClock rtc(1,0x68);
     // rtc.debugDumpRegisters(0x07);
     // unsigned char seconds = RealTimeClock::bcdToDecimal(rtc.readSeconds());
@@ -20,6 +21,9 @@ int main() {
     // cout << endl << "*** Testing write register ***" << endl;
     // rtc.writeRegister(0x04, bcdTest);
     // rtc.debugDumpRegisters(0x07);
+    if (argc > 2 && strcmp(argv[1], "set") == 0) {
+        rtc.setDateTime(argv[2]);
+    }
     rtc.displayDateTime();
     cout << endl;
 
