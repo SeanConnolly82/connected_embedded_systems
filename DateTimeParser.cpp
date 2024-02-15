@@ -12,10 +12,12 @@ DateTimeParser::DateTimeParser(const string& datetimeString) {
         istringstream iss(datetimeString);
         // Read day of the week
         iss >> day;
-        // Read date, month, and year
-        iss >> date >> month >> year;
-        // Read hour, minutes, and seconds
-        iss >> hour >> minutes >> seconds;
+        // Read date, month, and year, ignore slashes
+        char slash;
+        iss >> date >> slash >> month >> slash >> year;
+        // Read hour, minutes, and seconds, ignore colons
+        char colon;
+        iss >> hour >> colon >> minutes >> colon >> seconds;
     }
 
 string DateTimeParser::getDay() { 
