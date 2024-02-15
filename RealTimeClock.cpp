@@ -1,9 +1,9 @@
 #include <iostream>
 #include <iomanip>
-#include <string>
 
 #include "I2CDevice.h"
 #include "RealTimeClock.h"
+#include "DateTimeParser.h"
 
 using namespace std;
 
@@ -83,13 +83,23 @@ void RealTimeClock::displayDateTime() {
     cout << FRMT_WIDTH(bcdToDecimal(this->year)) + 2000 << endl;
 }
 
-void RealTimeClock::setDateTime(const string& datetimeString) {
-    cout << datetimeString << endl;
-    setSeconds(decimalToBcd(0));
-    setMinutes(decimalToBcd(35));
-    setHours(decimalToBcd(16));
-    setDay(decimalToBcd(4));
-    setDate(decimalToBcd(15));
-    setMonth(decimalToBcd(2));
-    setYear(decimalToBcd(24));
+void RealTimeClock::setDateTime(char *datetimeString) {
+    DateTimeParser dtp(datetimeString);
+
+    int weekdayIndex;
+    string weekdayName = dtp.getDay();
+    
+    for (int i = 0; i<7; i++) {
+        if (this->weekday[i] == weekdayName) {
+            weekdayIndex = i;
+            break;
+        }
+    }
+    setSeconds(decimalToBcd(dtp.getSeconds()));
+    setMinutes(decimalToBcd(dtp.getMinutes()));
+    setHours(decimalToBcd(dtp.getHour()));
+    setDay(decimalToBcd(weekdayIndex + 1));
+    setDate(decimalToBcd(dtp.getDate()));
+    setMonth(decimalToBcd(dtp.getMonth()));
+    setYear(decimalToBcd(dtp.getYear()-2000));
 }

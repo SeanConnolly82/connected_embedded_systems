@@ -1,4 +1,3 @@
-#include <string>
 #include "I2CDevice.h"
 
 using namespace std;
@@ -41,5 +40,5 @@ public:
     virtual int setDate(unsigned char date);
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
-    virtual void setDateTime(const string&  datetimeString);
+    virtual void setDateTime(char *datetimeString);
 };
