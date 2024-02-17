@@ -6,19 +6,28 @@
 
 using namespace std;
 
-DateTimeParser::DateTimeParser(const string& datetimeString) {
-        cout << datetimeString << endl;
-        
-        istringstream iss(datetimeString);
-        // Read day of the week
-        iss >> day;
-        // Read date, month, and year, ignore slashes
-        char slash;
-        iss >> date >> slash >> month >> slash >> year;
-        // Read hour, minutes, and seconds, ignore colons
-        char colon;
-        iss >> hour >> colon >> minutes >> colon >> seconds;
-    }
+DateTimeParser::DateTimeParser() {}
+
+void DateTimeParser::parseDateTime(const string& datetimeString) {
+
+    istringstream iss(datetimeString);
+    // Read day of the week
+    iss >> day;
+    // Read date, month, and year, ignore slashes
+    char slash;
+    iss >> date >> slash >> month >> slash >> year;
+    // Read hour, minutes, and seconds, ignore colons
+    char colon;
+    iss >> hour >> colon >> minutes >> colon >> seconds;
+}
+
+void DateTimeParser::parseAlarmTime(const string& alarmTimeString) {
+
+    istringstream iss(alarmTimeString);
+    // Read hour, minutes, and seconds, ignore colons
+    char colon;
+    iss >> hour >> colon >> minutes >> colon >> seconds;
+}
 
 string DateTimeParser::getDay() { 
     return day; 

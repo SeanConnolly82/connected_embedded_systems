@@ -72,19 +72,23 @@ void RealTimeClock::readDateTime() {
 
 void RealTimeClock::displayDateTime() {
     readDateTime();
-    cout << endl << "The time is ";
-    cout << FRMT_WIDTH(bcdToDecimal(this->hours)) << ":";
-    cout << FRMT_WIDTH(bcdToDecimal(this->minutes)) << ":";
-    cout << FRMT_WIDTH(bcdToDecimal(this->seconds)) << endl;
+    // display the date
     cout << "The date is ";
     cout << this->weekday[(bcdToDecimal(this->day))-1] << " the ";
     cout << FRMT_WIDTH(bcdToDecimal(this->date)) << "-";
     cout << FRMT_WIDTH(bcdToDecimal(this->month)) << "-";
     cout << FRMT_WIDTH(bcdToDecimal(this->year)) + 2000 << endl;
+    // display the time
+    cout << endl << "The time is ";
+    cout << FRMT_WIDTH(bcdToDecimal(this->hours)) << ":";
+    cout << FRMT_WIDTH(bcdToDecimal(this->minutes)) << ":";
+    cout << FRMT_WIDTH(bcdToDecimal(this->seconds)) << endl << endl;
+    
 }
 
 void RealTimeClock::setDateTime(char *datetimeString) {
-    DateTimeParser dtp(datetimeString);
+    DateTimeParser dtp;
+    dtp.parseDateTime(datetimeString);
 
     int weekdayIndex;
     string weekdayName = dtp.getDay();
@@ -102,4 +106,31 @@ void RealTimeClock::setDateTime(char *datetimeString) {
     setDate(decimalToBcd(dtp.getDate()));
     setMonth(decimalToBcd(dtp.getMonth()));
     setYear(decimalToBcd(dtp.getYear()-2000));
+}
+
+int RealTimeClock::setAlarmSeconds(unsigned char seconds){
+    return I2CDevice::writeRegister(DS3231_ALRM_SEC_ADDR, seconds);
+}
+int RealTimeClock::setAlarmMinutes(unsigned char minutes){
+    return I2CDevice::writeRegister(DS3231_ALRM_MIN_ADDR, minutes);
+}
+int RealTimeClock::setAlarmHours(unsigned char hours){
+    return I2CDevice::writeRegister(DS3231_ALRM_HRS_ADDR, hours);
+}
+int RealTimeClock::setAlarmDay(unsigned char day){
+    return I2CDevice::writeRegister(DS3231_ALRM_DYDT_ADDR, day);
+}
+void RealTimeClock::setAlarmTime(char *alarmTimeString, int alarmNumber) {
+    unsigned char secs, mins, hrs, day, dt;
+    // TODO: Assign BCD values to variables
+    //       Case statement for mode
+    //       Then set the alarms
+    DateTimeParser dtp;
+    dtp.parseAlarmTime(alarmTimeString);
+    if (alarmNumber == 1) {
+        setAlarmSeconds(decimalToBcd(dtp.getSeconds()));
+        setAlarmMinutes(decimalToBcd(dtp.getMinutes()));
+        setAlarmHours(decimalToBcd(dtp.getHour()));
+        setAlarmDay(0x80);
+    }
 }

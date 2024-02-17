@@ -5,7 +5,9 @@ using namespace std;
 
 class DateTimeParser {
 public:
-    DateTimeParser(const string& datetimeString);
+    DateTimeParser();
+    void parseDateTime(const string& datetimeString);
+    void parseAlarmTime(const string& alarmTimeString);
     virtual string getDay();
     virtual int getDate();
     virtual int getMonth();

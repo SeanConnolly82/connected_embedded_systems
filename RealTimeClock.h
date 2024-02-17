@@ -10,6 +10,12 @@ using namespace std;
 #define DS3231_MON_ADDR 0x05
 #define DS3231_YRS_ADDR 0x06
 
+#define DS3231_ALRM_SEC_ADDR 0x07
+#define DS3231_ALRM_MIN_ADDR 0x08
+#define DS3231_ALRM_HRS_ADDR 0x09
+#define DS3231_ALRM_DYDT_ADDR 0x0A
+
+
 class RealTimeClock:public EE513::I2CDevice {
 private:
     unsigned char seconds;
@@ -41,4 +47,10 @@ public:
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
     virtual void setDateTime(char *datetimeString);
+    virtual int setAlarmSeconds(unsigned char second);
+    virtual int setAlarmMinutes(unsigned char mintues);
+    virtual int setAlarmHours(unsigned char hours);
+    virtual int setAlarmDay(unsigned char day);
+    //virtual int setAlarmDate(unsigned char date);
+    virtual void setAlarmTime(char *datetimeString, int alarmNumber);
 };
