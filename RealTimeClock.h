@@ -1,3 +1,5 @@
+#include <cstring>
+#include <string>
 #include "I2CDevice.h"
 
 using namespace std;
@@ -10,11 +12,14 @@ using namespace std;
 #define DS3231_MON_ADDR 0x05
 #define DS3231_YRS_ADDR 0x06
 
-#define DS3231_ALRM_SEC_ADDR 0x07
-#define DS3231_ALRM_MIN_ADDR 0x08
-#define DS3231_ALRM_HRS_ADDR 0x09
-#define DS3231_ALRM_DYDT_ADDR 0x0A
+#define DS3231_ALRM1_SEC_ADDR 0x07
+#define DS3231_ALRM1_MIN_ADDR 0x08
+#define DS3231_ALRM1_HRS_ADDR 0x09
+#define DS3231_ALRM1_DYDT_ADDR 0x0A
 
+#define DS3231_ALRM2_MIN_ADDR 0x0B
+#define DS3231_ALRM2_HRS_ADDR 0x0C
+#define DS3231_ALRM2_DYDT_ADDR 0x0D
 
 class RealTimeClock:public EE513::I2CDevice {
 private:
@@ -25,7 +30,6 @@ private:
     unsigned char date;
     unsigned char month;
     unsigned char year;
-    const char* weekday[7] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}; 
 public:
     RealTimeClock(unsigned int bus, unsigned int device);
     virtual unsigned char bcdToDecimal(unsigned char bcdValue);
@@ -47,10 +51,14 @@ public:
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
     virtual void setDateTime(char *datetimeString);
-    virtual int setAlarmSeconds(unsigned char second);
-    virtual int setAlarmMinutes(unsigned char mintues);
-    virtual int setAlarmHours(unsigned char hours);
-    virtual int setAlarmDay(unsigned char day);
-    //virtual int setAlarmDate(unsigned char date);
-    virtual void setAlarmTime(char *datetimeString, int alarmNumber);
+    virtual int setDyDt(char* dydt, string day);
+    virtual int setAlarm1Seconds(unsigned char second);
+    virtual int setAlarm1Minutes(unsigned char mintues);
+    virtual int setAlarm1Hours(unsigned char hours);
+    virtual int setAlarm1DyDt(unsigned char day);
+    virtual int setAlarm2Minutes(unsigned char mintues);
+    virtual int setAlarm2Hours(unsigned char hours);
+    virtual int setAlarm2DyDt(unsigned char date);
+    virtual void setAlarm(char *dydt, char *datetimeString, char *alarmNumber);
+    virtual void enableOutput();
 };

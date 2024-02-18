@@ -24,14 +24,32 @@ void DateTimeParser::parseDateTime(const string& datetimeString) {
 void DateTimeParser::parseAlarmTime(const string& alarmTimeString) {
 
     istringstream iss(alarmTimeString);
+    // Read the weekday name or the date
+    iss >> day;
     // Read hour, minutes, and seconds, ignore colons
     char colon;
     iss >> hour >> colon >> minutes >> colon >> seconds;
 }
 
-string DateTimeParser::getDay() { 
+int DateTimeParser::DayStoI(string dayName) {
+    
+    for (int i = 0; i<7; i++) {
+        if (daysArr[i] == dayName) {
+            return i + 1;
+        }
+    }
+    cout << "Please enter a valid day" << endl;
+    return 0;
+}
+
+string DateTimeParser::DayItoS(int dayNumber) {
+    return daysArr[dayNumber+1];
+}
+
+string DateTimeParser::getDay() {
     return day; 
 }
+
 int DateTimeParser::getDate() {
     return date; 
 }

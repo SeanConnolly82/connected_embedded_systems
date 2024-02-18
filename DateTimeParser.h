@@ -9,6 +9,9 @@ public:
     void parseDateTime(const string& datetimeString);
     void parseAlarmTime(const string& alarmTimeString);
     virtual string getDay();
+    virtual int DayStoI(string dayName);
+    virtual string DayItoS(int dayNumber);
+    //virtual string getDyDt();
     virtual int getDate();
     virtual int getMonth();
     virtual int getYear();
@@ -17,6 +20,7 @@ public:
     virtual int getSeconds();
 
 private:
+    const char* daysArr[7] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     string day;
     int date;
     int month;
