@@ -19,6 +19,16 @@ unsigned char RealTimeClock::bcdToDecimal(unsigned char bcdValue) {
 unsigned char RealTimeClock::decimalToBcd(unsigned char decimalValue) {
     return ((decimalValue / 10) << 4) | (decimalValue % 10);
 }
+
+// Set a specific bit in a byte to 1
+void RealTimeClock::setBitToOne(unsigned char &byte, int position) {
+    byte |= (1 << position);
+}
+// Set a specific bit in a byte to 0
+void RealTimeClock::setBitToZero(unsigned char &byte, int position) {
+    byte &= ~(1 << position);
+}
+
 unsigned char RealTimeClock::readSeconds(){
     return I2CDevice::readRegister(DS3231_SEC_ADDR);
 }
@@ -75,14 +85,12 @@ void RealTimeClock::displayDateTime() {
     readDateTime();
     DateTimeParser dtp;
     // display the date
-    cout << "The date is ";
+    cout << endl << "The current date & time is ";
     // cout << dtp.getDayName(bcdToDecimal(this->day)) << " the ";
     cout << FRMT_WIDTH(bcdToDecimal(this->date)) << "-";
     cout << FRMT_WIDTH(bcdToDecimal(this->month)) << "-";
-    cout << FRMT_WIDTH(bcdToDecimal(this->year)) + 2000 << endl;
-    // display the time
-    cout << endl << "The time is ";
-    cout << FRMT_WIDTH(bcdToDecimal(this->hours)) << ":";
+    cout << FRMT_WIDTH(bcdToDecimal(this->year)) + 2000;
+    cout << " " << FRMT_WIDTH(bcdToDecimal(this->hours)) << ":";
     cout << FRMT_WIDTH(bcdToDecimal(this->minutes)) << ":";
     cout << FRMT_WIDTH(bcdToDecimal(this->seconds)) << endl << endl;
     
@@ -151,17 +159,38 @@ void RealTimeClock::setAlarm(char *dydt, char *alarmTimeString, char *alarmNumbe
     intDydt = setDyDt(dydt, dtp.getDay());
 
     if (*alarmNumber == '1') {
+        // clear existing alarm
         setAlarm1Seconds(decimalToBcd(secs));
         setAlarm1Minutes(decimalToBcd(mins));
         setAlarm1Hours(decimalToBcd(hrs));
         setAlarm1DyDt(decimalToBcd(intDydt));
     } else if (*alarmNumber == '2') {
+        // clear existing alarm
         setAlarm2Minutes(decimalToBcd(dtp.getMinutes()));
         setAlarm2Hours(decimalToBcd(dtp.getHour()));
         setAlarm2DyDt(decimalToBcd(intDydt));
+        secs = 0; // seconds always 0 for alarm 2
+    } else {
+        cout << "Please select either alarm 1 or 2";
     }
+    // enable the interupt on INT/SQW output pin
+    cout << endl << "Alarm " << *alarmNumber << " set for Day/Date ";
+    cout << dtp.getDay() << " at " << FRMT_WIDTH(hrs) << ":";
+    cout << FRMT_WIDTH(mins) << ":" << FRMT_WIDTH(secs) << endl;
 }
 
-void RealTimeClock::enableOutput() {
-    // Set the output bit
+void RealTimeClock::enableInterrupt(char *alarmNumber) {
+
+    unsigned char control;
+    int alarmEnbaleFlag, intcn;
+
+    if (*alarmNumber == '1') alarmEnbaleFlag = 0;
+    if (*alarmNumber == '2') alarmEnbaleFlag = 1;
+    intcn = 2;
+
+    control = I2CDevice::readRegister(DS3231_CONTROL);
+    setBitToOne(control, alarmEnbaleFlag);
+    setBitToOne(control, intcn);
+
+    writeRegister(DS3231_CONTROL, control);
 }

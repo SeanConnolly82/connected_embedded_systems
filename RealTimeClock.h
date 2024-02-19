@@ -21,6 +21,8 @@ using namespace std;
 #define DS3231_ALRM2_HRS_ADDR 0x0C
 #define DS3231_ALRM2_DYDT_ADDR 0x0D
 
+#define DS3231_CONTROL 0x0E
+
 class RealTimeClock:public EE513::I2CDevice {
 private:
     unsigned char seconds;
@@ -30,10 +32,12 @@ private:
     unsigned char date;
     unsigned char month;
     unsigned char year;
-public:
-    RealTimeClock(unsigned int bus, unsigned int device);
     virtual unsigned char bcdToDecimal(unsigned char bcdValue);
     virtual unsigned char decimalToBcd(unsigned char decimalValue);
+    virtual void setBitToOne(unsigned char &byte, int position);
+    virtual void setBitToZero(unsigned char &byte, int position);
+public:
+    RealTimeClock(unsigned int bus, unsigned int device);
     virtual unsigned char readSeconds();
     virtual unsigned char readMinutes();
     virtual unsigned char readHours();
@@ -60,5 +64,7 @@ public:
     virtual int setAlarm2Hours(unsigned char hours);
     virtual int setAlarm2DyDt(unsigned char date);
     virtual void setAlarm(char *dydt, char *datetimeString, char *alarmNumber);
-    virtual void enableOutput();
+    virtual void enableInterrupt(char *alarmNumber);
+    // virtual void setSquareWaveFrequency();
+    // virtual void clearAlarms();
 };

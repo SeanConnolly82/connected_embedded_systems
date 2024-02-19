@@ -15,8 +15,10 @@ int main(int argc, char *argv[]) {
         rtc.setDateTime(argv[2]);
     } else if (argc > 2 && strcmp(argv[1], "set-alarm") == 0) {
         rtc.setAlarm(argv[2], argv[3], argv[4]);
+        // Interrupt is enabled
+        rtc.enableInterrupt(argv[4]);
     }
     rtc.displayDateTime();
-
+    
     return 0;
 }
