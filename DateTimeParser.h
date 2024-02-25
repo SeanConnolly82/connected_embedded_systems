@@ -3,15 +3,20 @@
 
 using namespace std;
 
+/**
+ * @class DateTimeParser
+ * @brief Generic datetime parser to break a datetime string into its constituent time components
+ */
+
 class DateTimeParser {
 public:
     DateTimeParser();
     void parseDateTime(const string& datetimeString);
     void parseAlarmTime(const string& alarmTimeString);
-    virtual string getDay();
-    virtual int DayStoI(string dayName);
-    virtual string DayItoS(int dayNumber);
-    //virtual string getDyDt();
+    virtual string getDayName();
+    virtual string dayItoS(int dayNumber);
+    virtual int dayStoI(string dayName);
+    virtual int getDayNumber();
     virtual int getDate();
     virtual int getMonth();
     virtual int getYear();
@@ -21,7 +26,8 @@ public:
 
 private:
     const char* daysArr[7] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    string day;
+    string dayName;
+    int dayNumber;
     int date;
     int month;
     int year;

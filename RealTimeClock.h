@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// datetime registers
 #define DS3231_SEC_ADDR 0x00
 #define DS3231_MIN_ADDR 0x01
 #define DS3231_HRS_ADDR 0x02
@@ -12,16 +13,26 @@ using namespace std;
 #define DS3231_MON_ADDR 0x05
 #define DS3231_YRS_ADDR 0x06
 
+// alarm 1 registers
 #define DS3231_ALRM1_SEC_ADDR 0x07
 #define DS3231_ALRM1_MIN_ADDR 0x08
 #define DS3231_ALRM1_HRS_ADDR 0x09
 #define DS3231_ALRM1_DYDT_ADDR 0x0A
 
+// alarm 2 registers
 #define DS3231_ALRM2_MIN_ADDR 0x0B
 #define DS3231_ALRM2_HRS_ADDR 0x0C
 #define DS3231_ALRM2_DYDT_ADDR 0x0D
 
+// control and status registers
 #define DS3231_CONTROL 0x0E
+#define DS3231_STATUS 0x0F
+
+/**
+ * @class RealTimeClock
+ * @brief Derived class of I2CDevice that provides an API to the functionality available in  DS3231 realtime clock
+ */
+
 
 class RealTimeClock:public EE513::I2CDevice {
 private:
@@ -55,7 +66,7 @@ public:
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
     virtual void setDateTime(char *datetimeString);
-    virtual int setDyDt(char* dydt, string day);
+    // virtual int setDyDt(char* dydt, string day);
     virtual int setAlarm1Seconds(unsigned char second);
     virtual int setAlarm1Minutes(unsigned char mintues);
     virtual int setAlarm1Hours(unsigned char hours);
@@ -63,8 +74,10 @@ public:
     virtual int setAlarm2Minutes(unsigned char mintues);
     virtual int setAlarm2Hours(unsigned char hours);
     virtual int setAlarm2DyDt(unsigned char date);
-    virtual void setAlarm(char *dydt, char *datetimeString, char *alarmNumber);
-    virtual void enableInterrupt(char *alarmNumber);
-    // virtual void setSquareWaveFrequency();
-    // virtual void clearAlarms();
+    virtual void setAlarm(char* dydt, char* datetimeString, char* alarmNumber);
+    virtual void clearAlarm(int flag);
+    virtual void enableInterrupt(char* alarmNumber);
+    virtual void outputSquareWave(char* level);
+    virtual int setSquareWaveFrequency(const char& level);
+    virtual void stopSquareWave();
 };
