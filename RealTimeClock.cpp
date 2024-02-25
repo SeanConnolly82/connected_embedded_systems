@@ -2,10 +2,12 @@
 #include <cstring>
 #include <string>
 #include <iomanip>
+#include <cmath>
 
 #include "I2CDevice.h"
 #include "RealTimeClock.h"
 #include "DateTimeParser.h"
+
 
 using namespace std;
 
@@ -52,6 +54,40 @@ void RealTimeClock::setBitToOne(unsigned char &byte, int position) {
  */
 void RealTimeClock::setBitToZero(unsigned char &byte, int position) {
     byte &= ~(1 << position);
+}
+
+/**
+ * @brief Converts a 2s complement binary value to its integer equivalent
+ * @param binaryValue The binary value from the register.
+ * @return The integer decimal value equivalent.
+ */
+int RealTimeClock::binaryToDecimal(unsigned char binaryValue) {
+
+    int value = static_cast<int>(binaryValue);
+    // Check the sign bit
+    bool isNegative = (value & 0x80) != 0;
+    // If negative, find magnitude by 1's complement and add 1
+    if (isNegative) {
+        value = -(static_cast<int>(~value) + 1);
+    }
+    return value;
+}
+
+/**
+ * @brief Convert a binary integer and binary fraction to a decimal number.
+ * @param binaryInt 8-bit binary integer part.
+ * @param binaryFraction 8-bit binary fraction part.
+ * @return The decimal representation of the binary number.
+ */
+double RealTimeClock::binaryFractionToDecimal(unsigned char binaryInt, unsigned char binaryFraction) {
+    double result = 0.0;
+    // Convert integer part
+    int integerPart = this->binaryToDecimal(binaryInt);
+    // Convert fractional part
+    for (int i = 7; i >= 0; --i) {
+        result += ((binaryFraction >> (7 - i)) & 1) * pow(2, -(i + 1));
+    }
+    return integerPart + result;
 }
 
 /**
@@ -108,6 +144,22 @@ unsigned char RealTimeClock::readMonth(){
  */
 unsigned char RealTimeClock::readYear(){
     return I2CDevice::readRegister(DS3231_YRS_ADDR);
+}
+
+/**
+ * @brief Read the temperature MSB from the Real-Time Clock (RTC).
+ * @return The temperature MSB value.
+ */
+unsigned char RealTimeClock::readTempMSB() {
+    return I2CDevice::readRegister(DS3231_TEMP_MSB);
+}
+
+/**
+ * @brief Read the temperature LSB from the Real-Time Clock (RTC).
+ * @return The temperature LSB value.
+ */
+unsigned char RealTimeClock::readTempLSB() {
+    return I2CDevice::readRegister(DS3231_TEMP_LSB);
 }
 
 /**
@@ -190,8 +242,8 @@ void RealTimeClock::readDateTime() {
  * @brief Display the formatted date and time.
  */
 void RealTimeClock::displayDateTime() {
-    readDateTime();
-     DateTimeParser dtp;
+    this->readDateTime();
+    DateTimeParser dtp;
     // display the date
     cout << endl << "The current date & time is ";
     cout << dtp.dayItoS(this->bcdToDecimal(this->day)) << " the ";
@@ -201,6 +253,27 @@ void RealTimeClock::displayDateTime() {
     cout << " " << FRMT_WIDTH(this->bcdToDecimal(this->hours)) << ":";
     cout << FRMT_WIDTH(this->bcdToDecimal(this->minutes)) << ":";
     cout << FRMT_WIDTH(this->bcdToDecimal(this->seconds)) << endl << endl;
+    
+}
+
+/**
+ * @brief Read the temperature from the RTC and store in class variables.
+ */
+void RealTimeClock::readTemperature() {
+    this->tempMSB = this->readTempMSB();
+    this->tempLSB = this->readTempLSB();
+}
+
+/**
+ * @brief Display the formatted temperature.
+ */
+void RealTimeClock::displayTemperature() {
+    this->readTemperature();
+    DateTimeParser dtp;
+    // display the temperature
+    cout << "The current temperature is ";
+    cout << this->binaryFractionToDecimal(this->tempMSB, this->tempLSB) << endl << endl;
+
     
 }
 
@@ -282,27 +355,6 @@ int RealTimeClock::setAlarm2Hours(unsigned char hours){
 int RealTimeClock::setAlarm2DyDt(unsigned char day){
     return I2CDevice::writeRegister(DS3231_ALRM2_DYDT_ADDR, day);
 }
-
-// /**
-//  * @brief Set the day or date value for Alarm based on user input.
-//  * @param dydt A string indicating 'dy' for alarm by day or 'dt' for alarm by date.
-//  * @param day The day or date value.
-//  * @return The calculated integer value combining dydt and day.
-//  */
-// int RealTimeClock::setDyDt(char *dydt, string day) {
-
-//     string dydtStr(dydt);
-//     DateTimeParser dtp;
-  
-//     if (dydtStr == "dy") {
-//         return dtp.dayStoI(day) + this->bcdToDecimal(0x40);
-//     } else if (dydtStr == "dt") {
-//         return stoi(day);
-//     } else {
-//         cout << "Please enter dy for alarm by day, or dt for alarm by date" << endl << endl;
-//         return 0;
-//     }
-// }
 
 /**
  * @brief Set an alarm in the RTC based on user input.

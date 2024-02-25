@@ -28,6 +28,10 @@ using namespace std;
 #define DS3231_CONTROL 0x0E
 #define DS3231_STATUS 0x0F
 
+// temperature registers
+#define DS3231_TEMP_MSB 0x11
+#define DS3231_TEMP_LSB 0x12
+
 /**
  * @class RealTimeClock
  * @brief Derived class of I2CDevice that provides an API to the functionality available in  DS3231 realtime clock
@@ -43,10 +47,14 @@ private:
     unsigned char date;
     unsigned char month;
     unsigned char year;
+    unsigned char tempMSB;
+    unsigned char tempLSB;
     virtual unsigned char bcdToDecimal(unsigned char bcdValue);
     virtual unsigned char decimalToBcd(unsigned char decimalValue);
     virtual void setBitToOne(unsigned char &byte, int position);
     virtual void setBitToZero(unsigned char &byte, int position);
+    virtual int binaryToDecimal(unsigned char binaryValue);
+    virtual double binaryFractionToDecimal(unsigned char binaryInt, unsigned char binaryFraction);
 public:
     RealTimeClock(unsigned int bus, unsigned int device);
     virtual unsigned char readSeconds();
@@ -56,8 +64,12 @@ public:
     virtual unsigned char readDate();
     virtual unsigned char readMonth();
     virtual unsigned char readYear();
+    virtual unsigned char readTempMSB();
+    virtual unsigned char readTempLSB();
     virtual void readDateTime();
     virtual void displayDateTime();
+    virtual void readTemperature();
+    virtual void displayTemperature();
     virtual int setSeconds(unsigned char second);
     virtual int setMinutes(unsigned char mintues);
     virtual int setHours(unsigned char hours);
@@ -66,7 +78,6 @@ public:
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
     virtual void setDateTime(char *datetimeString);
-    // virtual int setDyDt(char* dydt, string day);
     virtual int setAlarm1Seconds(unsigned char second);
     virtual int setAlarm1Minutes(unsigned char mintues);
     virtual int setAlarm1Hours(unsigned char hours);

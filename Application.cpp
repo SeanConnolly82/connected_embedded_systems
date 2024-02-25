@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
         }
     }
     rtc.displayDateTime();
+    rtc.displayTemperature();
     
     return 0;
 }
