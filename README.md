@@ -15,7 +15,7 @@ e.g. `./rtc set-time 'Monday 26/02/2024 14:44:23'`
 
 Setting an alarm:
 ```bash
-./rtc set-alarm [dy|dt] ‘dd hh:mm:ss’ [1|2]
+./rtc set-alarm [dy|dt] 'dd hh:mm:ss' [1|2]
 ```
 e.g. `./rtc set-alarm dt '19 21:58:30' 1`
 

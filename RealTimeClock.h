@@ -67,7 +67,7 @@ public:
     virtual int setAlarm2Minutes(unsigned char mintues);
     virtual int setAlarm2Hours(unsigned char hours);
     virtual int setAlarm2DyDt(unsigned char date);
-    virtual void setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int intDydt);
+    virtual void setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int dayNumber);
     virtual void clearAlarm(int flag);
     virtual void enableInterrupt(char* alarmNumber);
     virtual void outputSquareWave(char* level);

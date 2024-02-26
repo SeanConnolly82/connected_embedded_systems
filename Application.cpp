@@ -76,7 +76,7 @@ void Application::displayTemperature() {
  * @param alarmNumber A character indicating Alarm 1 or Alarm 2.
  */
 void Application::setAlarm(char* dydt, char* alarmTimeString, char* alarmNumber) {
-    int secs, mins, hrs, intDydt;
+    int secs, mins, hrs, day;
 
     DateTimeParser dtp;
     dtp.parseAlarmTime(alarmTimeString);
@@ -84,9 +84,9 @@ void Application::setAlarm(char* dydt, char* alarmTimeString, char* alarmNumber)
     secs = dtp.getSeconds();
     mins = dtp.getMinutes();
     hrs = dtp.getHour();
-    intDydt = dtp.getDayNumber();
+    day = dtp.getDayNumber();
 
-    RealTimeClock::setAlarm(dydt, alarmNumber, secs, mins, hrs, intDydt);
+    RealTimeClock::setAlarm(dydt, alarmNumber, secs, mins, hrs, day);
 
     cout << endl << "Alarm " << *alarmNumber << " set for Day/Date ";
     cout << dtp.getDayNumber() << " at " << FRMT_WIDTH(hrs) << ":";

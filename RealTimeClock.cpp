@@ -324,7 +324,15 @@ int RealTimeClock::setAlarm2DyDt(unsigned char day){
  * @param hrs The hours value for the alarm.
  * @param intDydt The day or date value for the alarm.
  */
-void RealTimeClock::setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int intDydt) {
+void RealTimeClock::setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int dayNumber) {
+
+    unsigned char dydtValue;
+
+    if (strcmp(dydt, "dy") == 0) {
+        dydtValue = decimalToBcd(dayNumber) | 0x40;
+    } else if (strcmp(dydt, "dt") == 0) {
+        dydtValue = decimalToBcd(dayNumber);
+    }
 
     if (*alarmNumber == '1') {
         // clear existing alarm
@@ -332,13 +340,13 @@ void RealTimeClock::setAlarm(char* dydt, char* alarmNumber, int secs, int mins, 
         this->setAlarm1Seconds(this->decimalToBcd(secs));
         this->setAlarm1Minutes(this->decimalToBcd(mins));
         this->setAlarm1Hours(this->decimalToBcd(hrs));
-        this->setAlarm1DyDt(this->decimalToBcd(intDydt));
+        this->setAlarm1DyDt(dydtValue);
     } else if (*alarmNumber == '2') {
         // clear existing alarm
         this->clearAlarm(2);
         this->setAlarm2Minutes(this->decimalToBcd(mins));
         this->setAlarm2Hours(this->decimalToBcd(hrs));
-        this->setAlarm2DyDt(this->decimalToBcd(intDydt));
+        this->setAlarm2DyDt(dydtValue);
         secs = 0; // seconds always 0 for alarm 2
     } else {
         cout << "Please select either alarm 1 or 2";
