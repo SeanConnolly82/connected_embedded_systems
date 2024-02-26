@@ -36,25 +36,11 @@ using namespace std;
  * @class RealTimeClock
  * @brief Derived class of I2CDevice that provides an API to the functionality available in  DS3231 realtime clock
  */
-
-
 class RealTimeClock:public EE513::I2CDevice {
 private:
-    unsigned char seconds;
-    unsigned char minutes;
-    unsigned char hours;
-    unsigned char day;
-    unsigned char date;
-    unsigned char month;
-    unsigned char year;
-    unsigned char tempMSB;
-    unsigned char tempLSB;
-    virtual unsigned char bcdToDecimal(unsigned char bcdValue);
-    virtual unsigned char decimalToBcd(unsigned char decimalValue);
     virtual void setBitToOne(unsigned char &byte, int position);
     virtual void setBitToZero(unsigned char &byte, int position);
     virtual int binaryToDecimal(unsigned char binaryValue);
-    virtual double binaryFractionToDecimal(unsigned char binaryInt, unsigned char binaryFraction);
 public:
     RealTimeClock(unsigned int bus, unsigned int device);
     virtual unsigned char readSeconds();
@@ -66,10 +52,6 @@ public:
     virtual unsigned char readYear();
     virtual unsigned char readTempMSB();
     virtual unsigned char readTempLSB();
-    virtual void readDateTime();
-    virtual void displayDateTime();
-    virtual void readTemperature();
-    virtual void displayTemperature();
     virtual int setSeconds(unsigned char second);
     virtual int setMinutes(unsigned char mintues);
     virtual int setHours(unsigned char hours);
@@ -77,7 +59,7 @@ public:
     virtual int setDate(unsigned char date);
     virtual int setMonth(unsigned char month);
     virtual int setYear(unsigned char year);
-    virtual void setDateTime(char *datetimeString);
+    virtual void setDateTime(int secs, int mins, int hrs, int day, int date, int month, int year);
     virtual int setAlarm1Seconds(unsigned char second);
     virtual int setAlarm1Minutes(unsigned char mintues);
     virtual int setAlarm1Hours(unsigned char hours);
@@ -85,10 +67,13 @@ public:
     virtual int setAlarm2Minutes(unsigned char mintues);
     virtual int setAlarm2Hours(unsigned char hours);
     virtual int setAlarm2DyDt(unsigned char date);
-    virtual void setAlarm(char* dydt, char* datetimeString, char* alarmNumber);
+    virtual void setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int intDydt);
     virtual void clearAlarm(int flag);
     virtual void enableInterrupt(char* alarmNumber);
     virtual void outputSquareWave(char* level);
     virtual int setSquareWaveFrequency(const char& level);
     virtual void stopSquareWave();
+    virtual unsigned char bcdToDecimal(unsigned char bcdValue);
+    virtual unsigned char decimalToBcd(unsigned char decimalValue);
+    virtual double binaryFractionToDecimal(unsigned char binaryInt, unsigned char binaryFraction);
 };

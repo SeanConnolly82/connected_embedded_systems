@@ -6,13 +6,8 @@
 
 #include "I2CDevice.h"
 #include "RealTimeClock.h"
-#include "DateTimeParser.h"
-
 
 using namespace std;
-
-// Macro for formatting output
-#define FRMT_WIDTH(x) setw(2) << setfill('0') << int(x)
 
 /**
  * @brief Constructor for the RealTimeClock class, inheriting from I2CDevice.
@@ -165,7 +160,7 @@ unsigned char RealTimeClock::readTempLSB() {
 /**
  * @brief Set the seconds in the Real-Time Clock (RTC).
  * @param seconds The seconds value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setSeconds(unsigned char seconds){
     return I2CDevice::writeRegister(DS3231_SEC_ADDR, seconds);
@@ -174,7 +169,7 @@ int RealTimeClock::setSeconds(unsigned char seconds){
 /**
  * @brief Set the minutes in the Real-Time Clock (RTC).
  * @param minutes The minutes value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setMinutes(unsigned char minutes){
     return I2CDevice::writeRegister(DS3231_MIN_ADDR, minutes);
@@ -183,7 +178,7 @@ int RealTimeClock::setMinutes(unsigned char minutes){
 /**
  * @brief Set the hours in the Real-Time Clock (RTC).
  * @param hours The hours value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setHours(unsigned char hours){
     return I2CDevice::writeRegister(DS3231_HRS_ADDR, hours);
@@ -192,7 +187,7 @@ int RealTimeClock::setHours(unsigned char hours){
 /**
  * @brief Set the day in the Real-Time Clock (RTC).
  * @param day The day value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setDay(unsigned char day){
     return I2CDevice::writeRegister(DS3231_DAY_ADDR, day);
@@ -201,7 +196,7 @@ int RealTimeClock::setDay(unsigned char day){
 /**
  * @brief Set the date in the Real-Time Clock (RTC).
  * @param date The date value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setDate(unsigned char date){
     return I2CDevice::writeRegister(DS3231_DTE_ADDR, date);
@@ -210,7 +205,7 @@ int RealTimeClock::setDate(unsigned char date){
 /**
  * @brief Set the month in the Real-Time Clock (RTC).
  * @param month The month value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setMonth(unsigned char month){
     return I2CDevice::writeRegister(DS3231_MON_ADDR, month);
@@ -219,84 +214,42 @@ int RealTimeClock::setMonth(unsigned char month){
 /**
  * @brief Set the year in the Real-Time Clock (RTC).
  * @param year The year value to set.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setYear(unsigned char year){
     return I2CDevice::writeRegister(DS3231_YRS_ADDR, year);
 }
 
 /**
- * @brief Read the complete date and time from the RTC and store in class variables.
+ * @brief Set the date and time in the Real-Time Clock (RTC).
+ *
+ * This function sets the date and time in the RTC by converting the provided
+ * values to Binary-Coded Decimal (BCD) format and then calling the respective
+ * set functions for seconds, minutes, hours, day, date, month, and year.
+ *
+ * @param secs The seconds value to set.
+ * @param mins The minutes value to set.
+ * @param hrs The hours value to set.
+ * @param day The day value to set.
+ * @param date The date value to set.
+ * @param month The month value to set.
+ * @param year The year value to set.
  */
-void RealTimeClock::readDateTime() {
-    this->seconds = this->readSeconds();
-    this->minutes = this->readMinutes();
-    this->hours = this->readHours();
-    this->day = this->readDay();
-    this->date = this->readDate();
-    this->month = this->readMonth();
-    this->year = this->readYear();
-}
 
-/**
- * @brief Display the formatted date and time.
- */
-void RealTimeClock::displayDateTime() {
-    this->readDateTime();
-    DateTimeParser dtp;
-    // display the date
-    cout << endl << "The current date & time is ";
-    cout << dtp.dayItoS(this->bcdToDecimal(this->day)) << " the ";
-    cout << FRMT_WIDTH(this->bcdToDecimal(this->date)) << "-";
-    cout << FRMT_WIDTH(this->bcdToDecimal(this->month)) << "-";
-    cout << FRMT_WIDTH(this->bcdToDecimal(this->year)) + 2000;
-    cout << " " << FRMT_WIDTH(this->bcdToDecimal(this->hours)) << ":";
-    cout << FRMT_WIDTH(this->bcdToDecimal(this->minutes)) << ":";
-    cout << FRMT_WIDTH(this->bcdToDecimal(this->seconds)) << endl << endl;
-    
-}
-
-/**
- * @brief Read the temperature from the RTC and store in class variables.
- */
-void RealTimeClock::readTemperature() {
-    this->tempMSB = this->readTempMSB();
-    this->tempLSB = this->readTempLSB();
-}
-
-/**
- * @brief Display the formatted temperature.
- */
-void RealTimeClock::displayTemperature() {
-    this->readTemperature();
-    DateTimeParser dtp;
-    // display the temperature
-    cout << "The current temperature is ";
-    cout << this->binaryFractionToDecimal(this->tempMSB, this->tempLSB) << endl << endl;
-
-    
-}
-
-/**
- * @brief Set the date and time in the RTC using a formatted string.
- * @param datetimeString The formatted string containing date and time.
- */
-void RealTimeClock::setDateTime(char *datetimeString) {
-    DateTimeParser dtp;
-    dtp.parseDateTime(datetimeString);
-    setSeconds(this->decimalToBcd(dtp.getSeconds()));
-    setMinutes(this->decimalToBcd(dtp.getMinutes()));
-    setHours(this->decimalToBcd(dtp.getHour()));
-    setDay(this->decimalToBcd(dtp.dayStoI(dtp.getDayName())));
-    setDate(this->decimalToBcd(dtp.getDate()));
-    setMonth(this->decimalToBcd(dtp.getMonth()));
-    setYear(this->decimalToBcd(dtp.getYear() - 2000));
+void RealTimeClock::setDateTime(int secs, int mins, int hrs, int day, int date, int month, int year) {
+    setSeconds(this->decimalToBcd(secs));
+    setMinutes(this->decimalToBcd(mins));
+    setHours(this->decimalToBcd(hrs));
+    setDay(this->decimalToBcd(day));
+    setDate(this->decimalToBcd(date));
+    setMonth(this->decimalToBcd(month));
+    setYear(this->decimalToBcd(year));
 }
 
 /**
  * @brief Set the seconds for Alarm 1 in the RTC.
  * @param seconds The seconds value to set for Alarm 1.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm1Seconds(unsigned char seconds){
     return I2CDevice::writeRegister(DS3231_ALRM1_SEC_ADDR, seconds);
@@ -305,7 +258,7 @@ int RealTimeClock::setAlarm1Seconds(unsigned char seconds){
 /**
  * @brief Set the minutes for Alarm 1 in the RTC.
  * @param minutes The minutes value to set for Alarm 1.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm1Minutes(unsigned char minutes){
     return I2CDevice::writeRegister(DS3231_ALRM1_MIN_ADDR, minutes);
@@ -314,7 +267,7 @@ int RealTimeClock::setAlarm1Minutes(unsigned char minutes){
 /**
  * @brief Set the hours for Alarm 1 in the RTC.
  * @param hours The hours value to set for Alarm 1.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm1Hours(unsigned char hours){
     return I2CDevice::writeRegister(DS3231_ALRM1_HRS_ADDR, hours);
@@ -323,7 +276,7 @@ int RealTimeClock::setAlarm1Hours(unsigned char hours){
 /**
  * @brief Set the day or date for Alarm 1 in the RTC.
  * @param day The day or date value to set for Alarm 1.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm1DyDt(unsigned char day){
     return I2CDevice::writeRegister(DS3231_ALRM1_DYDT_ADDR, day);
@@ -332,7 +285,7 @@ int RealTimeClock::setAlarm1DyDt(unsigned char day){
 /**
  * @brief Set the minutes for Alarm 2 in the RTC.
  * @param minutes The minutes value to set for Alarm 2.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm2Minutes(unsigned char minutes){
     return I2CDevice::writeRegister(DS3231_ALRM2_MIN_ADDR, minutes);
@@ -341,7 +294,7 @@ int RealTimeClock::setAlarm2Minutes(unsigned char minutes){
 /**
  * @brief Set the hours for Alarm 2 in the RTC.
  * @param hours The hours value to set for Alarm 2.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm2Hours(unsigned char hours){
     return I2CDevice::writeRegister(DS3231_ALRM2_HRS_ADDR, hours);
@@ -350,28 +303,28 @@ int RealTimeClock::setAlarm2Hours(unsigned char hours){
 /**
  * @brief Set the day or date for Alarm 2 in the RTC.
  * @param day The day or date value to set for Alarm 2.
- * @return 0 if successful, -1 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setAlarm2DyDt(unsigned char day){
     return I2CDevice::writeRegister(DS3231_ALRM2_DYDT_ADDR, day);
 }
 
 /**
- * @brief Set an alarm in the RTC based on user input.
+ * @brief Set an alarm in the Real-Time Clock (RTC) based on user input.
+ *
+ * This function allows the user to set an alarm in the RTC by providing the alarm type ('dy' or 'dt'),
+ * the alarm number ('1' or '2'), and the time components (seconds, minutes, hours, and day/date).
+ * It clears any existing alarm of the specified type, sets the new alarm parameters, and enables
+ * the interrupt on the INT/SQW output pin for the specified alarm.
+ *
  * @param dydt A string indicating 'dy' for alarm by day or 'dt' for alarm by date.
- * @param alarmTimeString The formatted string containing the alarm time.
  * @param alarmNumber A character indicating Alarm 1 or Alarm 2.
+ * @param secs The seconds value for the alarm.
+ * @param mins The minutes value for the alarm.
+ * @param hrs The hours value for the alarm.
+ * @param intDydt The day or date value for the alarm.
  */
-void RealTimeClock::setAlarm(char* dydt, char* alarmTimeString, char* alarmNumber) {
-    int secs, mins, hrs, intDydt;
-
-    DateTimeParser dtp;
-    dtp.parseAlarmTime(alarmTimeString);
-
-    secs = dtp.getSeconds();
-    mins = dtp.getMinutes();
-    hrs = dtp.getHour();
-    intDydt = dtp.getDayNumber();
+void RealTimeClock::setAlarm(char* dydt, char* alarmNumber, int secs, int mins, int hrs, int intDydt) {
 
     if (*alarmNumber == '1') {
         // clear existing alarm
@@ -390,10 +343,7 @@ void RealTimeClock::setAlarm(char* dydt, char* alarmTimeString, char* alarmNumbe
     } else {
         cout << "Please select either alarm 1 or 2";
     }
-    // enable the interrupt on INT/SQW output pin
-    cout << endl << "Alarm " << *alarmNumber << " set for Day/Date ";
-    cout << dtp.getDayNumber() << " at " << FRMT_WIDTH(hrs) << ":";
-    cout << FRMT_WIDTH(mins) << ":" << FRMT_WIDTH(secs) << endl;
+    this->enableInterrupt(alarmNumber);
 }
 
 /**
