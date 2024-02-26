@@ -237,13 +237,13 @@ int RealTimeClock::setYear(unsigned char year){
  */
 
 void RealTimeClock::setDateTime(int secs, int mins, int hrs, int day, int date, int month, int year) {
-    setSeconds(this->decimalToBcd(secs));
-    setMinutes(this->decimalToBcd(mins));
-    setHours(this->decimalToBcd(hrs));
-    setDay(this->decimalToBcd(day));
-    setDate(this->decimalToBcd(date));
-    setMonth(this->decimalToBcd(month));
-    setYear(this->decimalToBcd(year));
+    this->setSeconds(this->decimalToBcd(secs));
+    this->setMinutes(this->decimalToBcd(mins));
+    this->setHours(this->decimalToBcd(hrs));
+    this->setDay(this->decimalToBcd(day));
+    this->setDate(this->decimalToBcd(date));
+    this->setMonth(this->decimalToBcd(month));
+    this->setYear(this->decimalToBcd(year));
 }
 
 /**
@@ -343,7 +343,6 @@ void RealTimeClock::setAlarm(char* dydt, char* alarmNumber, int secs, int mins, 
     } else {
         cout << "Please select either alarm 1 or 2";
     }
-    this->enableInterrupt(alarmNumber);
 }
 
 /**

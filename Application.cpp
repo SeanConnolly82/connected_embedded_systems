@@ -54,7 +54,6 @@ void Application::displayDateTime() {
     cout << " " << FRMT_WIDTH(RealTimeClock::bcdToDecimal(hrs)) << ":";
     cout << FRMT_WIDTH(RealTimeClock::bcdToDecimal(mins)) << ":";
     cout << FRMT_WIDTH(RealTimeClock::bcdToDecimal(secs)) << endl << endl;
-    
 }
 
 /**
@@ -66,7 +65,8 @@ void Application::displayTemperature() {
     unsigned char tempLSB = RealTimeClock::readTempLSB();
     // display the temperature
     cout << "The current temperature is ";
-    cout << RealTimeClock::binaryFractionToDecimal(tempMSB, tempLSB) << endl << endl;
+    cout << RealTimeClock::binaryFractionToDecimal(tempMSB, tempLSB);
+    cout << " degrees Celsius" << endl << endl;
 }
 
 /**
@@ -99,9 +99,7 @@ void Application::setAlarm(char* dydt, char* alarmTimeString, char* alarmNumber)
 int main(int argc, char *argv[]) {
 
     int alarm;
-
     Application rtc(1,0x68);
-
     if (argc > 1) {
         if (strcmp(argv[1], "set-time") == 0) {
             rtc.setDateTime(argv[2]);
