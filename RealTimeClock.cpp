@@ -403,7 +403,7 @@ void RealTimeClock::outputSquareWave(char* level) {
 /**
  * @brief Set the square wave frequency based on user input.
  * @param level A character indicating the level of the square wave (1 to 4).
- * @return 1 if successful, 0 if there was an error.
+ * @return 0 if successful, 1 if there was an error.
  */
 int RealTimeClock::setSquareWaveFrequency(const char& level) {
 
@@ -430,10 +430,10 @@ int RealTimeClock::setSquareWaveFrequency(const char& level) {
             break;
         default:
             cout << "Please choose a level 1-4 for square wave output" << endl;
-            return 0;
+            return 1;
     }
     I2CDevice::writeRegister(DS3231_CONTROL, control);
-    return 1;
+    return 0;
 }
 
 /**
